@@ -16,7 +16,8 @@
   "dependencies": {
     "polymer": "~1.4.0",
     "px-theme": "~0.7.1",
-    "hydrolysis": "~1.24.1"
+    "hydrolysis": "~1.24.1",
+    "iron-doc-viewer": "~1.0.15"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#~v1.1.6",
