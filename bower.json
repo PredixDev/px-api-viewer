@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "polymer": "^1.6.0",
-    "px-theme": "~0.7.1",
+    "px-theme": "^0.8.0",
     "hydrolysis": "~1.24.1",
     "iron-doc-viewer": "~1.0.15"
   },
