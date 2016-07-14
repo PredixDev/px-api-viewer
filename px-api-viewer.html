@@ -72,8 +72,8 @@ Element providing API documentation for a requested Polymer component
     },
     /*
     * Fired when hydrolysissuccessfully passes the json
-    * to iron-doc-viewer
-    * @event elementAPIReceived
+    * to iron-doc-viewer successfully.
+    * @event pxElementAPIReceived
     */
     /*
     * Set the _elementDescriptor on the component, and fire a elementAPIReceived event
@@ -81,7 +81,7 @@ Element providing API documentation for a requested Polymer component
     */
     _setElementDescriptor: function(analyzer) {
       this.set('_elementDescriptor', analyzer.elementsByTagName[this.source]);
-      this.fire('elementAPIReceived', analyzer.elementsByTagName[this.source]);
+      this.fire('pxElementAPIReceived', analyzer.elementsByTagName[this.source]);
     }
   });
 </script>

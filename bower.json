@@ -11,10 +11,11 @@
     "sass",
     "bower_components",
     "node_modules",
-    "test"
+    "test",
+    ".git"
   ],
   "dependencies": {
-    "polymer": "~1.4.0",
+    "polymer": "^1.6.0",
     "px-theme": "~0.7.1",
     "hydrolysis": "~1.24.1",
     "iron-doc-viewer": "~1.0.15"

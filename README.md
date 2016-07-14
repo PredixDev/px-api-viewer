@@ -1,8 +1,16 @@
-#Px-Api-Viewer
+# px-api-viewer
 
 ## Overview
 
-Px-Api-Viewer is a Predix UI component
+px-api-viewer is a Predix UI component which uses Hydrolysis and iron-doc-viewer to create API docs on the fly from a requested Component.
+
+You need to pass the `source` attribute to the component - this attribute should hold the name of the component you'd like the API created for.
+
+Example:
+
+    <px-api-viewer source="px-dropdown"></px-api-viewer>
+
+
 
 ## Usage
 
@@ -19,19 +27,19 @@ Node, npm and bower are necessary to install the component and dependencies. web
 First, install the component via bower on the command line.
 
 ```
-bower install Px-Api-Viewer --save
+bower install px-api-viewer --save
 ```
 
 Second, import the component to your application with the following tag in your head.
 
 ```
-<link rel="import" href="/bower_components/Px-Api-Viewer/Px-Api-Viewer.html"/>
+<link rel="import" href="/bower_components/px-api-viewer/px-api-viewer.html"/>
 ```
 
 Finally, use the component in your application:
 
 ```
-Insert Your demo code here.
+<px-api-viewer source="px-dropdown"></px-api-viewer>
 ```
 
 <br />
@@ -39,9 +47,9 @@ Insert Your demo code here.
 
 ## documentation
 
-Read the full API and view the demo [here](https://predixdev.github.io/Px-Api-Viewer).
+Read the full API and view the demo [here](https://predixdev.github.io/px-api-viewer).
 
-The documentation in this repository is supplemental to the official Predix documentation, which is continuously updated and maintained by the Predix documentation team. Go to [http://predix.io](http://predix.io)  to see the official Predix documentation.
+The documentation in this repository is supplemental to the official Predix documentation, which is continuously updated and maintained by the Predix documentation team. Go to [http://predix.io](http://predix.io) to see the official Predix documentation.
 
 
 ## Local Development
@@ -79,4 +87,4 @@ $ grunt devmode
 
 ## Known Issues
 
-Please use [Github Issues](https://github.com/PredixDev/Px-Api-Viewer/issues) to submit any bugs you might find.
+Please use [Github Issues](https://github.com/PredixDev/px-api-viewer/issues) to submit any bugs you might find.
