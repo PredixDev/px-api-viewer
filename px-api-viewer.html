@@ -62,13 +62,12 @@ Element providing API documentation for a requested Polymer component
       }
     },
     attached: function() {
-      var hyd = require('hydrolysis'),
-          _this = this;
+      var hyd = require('hydrolysis');
       //have hydrolysis analyze the requested component
-      hyd.Analyzer.analyze(_this.source)
+      hyd.Analyzer.analyze(this.source)
         .then(function(analyzer) {
-          _this._setElementDescriptor(analyzer);
-        });
+          this._setElementDescriptor(analyzer);
+        }.bind(this));
     },
     /*
     * Fired when hydrolysissuccessfully passes the json
