@@ -23,9 +23,9 @@ Element providing API documentation for a requested Polymer component
   <link rel="import" type="css" href="css/px-api-viewer.css"/>
   <template>
     <template is="dom-if" if="[[_behaviorOn]]">
-      <div on-click="_turnBehaviorOff" class="returnToApi"><iron-icon icon="fa:fa-chevron-left"></iron-icon> Return to [[source]]'s API</div>
+      <div on-tap="_turnBehaviorOff" class="returnToApi"><iron-icon icon="fa:fa-chevron-left"></iron-icon> Return to [[source]]'s API</div>
     </template>
-    <iron-doc-viewer descriptor="{{_elementDescriptor}}"></iron-doc-viewer>
+    <iron-doc-viewer descriptor="[[_elementDescriptor]]"></iron-doc-viewer>
   </template>
 </dom-module>
 
@@ -35,11 +35,11 @@ Element providing API documentation for a requested Polymer component
     is: 'px-api-viewer',
 
     /**
-         * Properties block, expose attribute values to the DOM via 'notify'
-         *
-         * @property properties
-         * @type Object
-         */
+     * Properties block, expose attribute values to the DOM via 'notify'
+     *
+     * @property properties
+     * @type Object
+     */
     properties: {
       /*
       * A json object, created by hydrolysis, which contains the actual
@@ -64,10 +64,23 @@ Element providing API documentation for a requested Polymer component
         value: '',
         notify: true
       },
+      /*
+      * The initial object created by hydrolysis
+      *
+      * @property _analyzer
+      * @type Object
+      */
       _analyzer: {
         type: Object,
         notify: true
       },
+      /*
+      * A boolean that tells us if the user is currently viewing a behavior.
+      *
+      *
+      * @property _behaviorOn
+      * @type Boolean
+      */
       _behaviorOn : {
         type: Boolean,
         value:false,
@@ -86,10 +99,20 @@ Element providing API documentation for a requested Polymer component
           this.set('_analyzer', analyzer);
         }.bind(this));
     },
+    /*
+    * This method is called when the return button is clicked/tapped
+    * it sets behaviorOn to false, and changes the displayed API to the original one.
+    * @method _turnBehaviorOff
+    */
     _turnBehaviorOff: function() {
       this.set('_behaviorOn',false);
       this._setElementDescriptor(this._analyzer);
     },
+    /*
+    * This listener method is called when a behavior API is requested.
+    * It sets the active API to the clicked on behavior
+    * @method _behaviorClicked
+    */
     _behaviorClicked: function(evt) {
       this._setElementDescriptor(this._analyzer, evt.detail);
     },
