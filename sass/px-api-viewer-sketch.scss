@@ -36,7 +36,10 @@ Predix branding rules go in px-api-viewer-predix.scss, not in this file.
 
 
 // Component
-
+.returnToApi {
+  cursor: pointer;
+  font-size: calculateRem(18px);
+}
 // Trumps
 @import "inuit-clearfix/_trumps.clearfix.scss";
 @import "px-spacing-responsive-design/_trumps.spacing-responsive.scss";
