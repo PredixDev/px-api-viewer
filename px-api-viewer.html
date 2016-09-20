@@ -64,7 +64,7 @@ Element providing API documentation for a requested Polymer component
       */
       source: {
         type: String,
-        value: '',
+        //value: '',
         notify: true
       },
       /*
@@ -105,23 +105,32 @@ Element providing API documentation for a requested Polymer component
       'iron-doc-viewer-component-selected':'_behaviorClicked'
     },
     attached: function() {
-
+      this.debounce( 'hydro', function(){
+        this._analyze(this.source, this.elementName);
+      });
     },
     /**
      * This method handles loading the source element when the value changes.
      */
     _onSourceChange: function(source, elementName){
-
-      this.debounce( 'hydro', function(){
-        if(source && source !== ''){
-          var hyd = require('hydrolysis');
-          //have hydrolysis analyze the requested component
-          hyd.Analyzer.analyze(this.source + ".html").then(function(analyzer) {
-            this._setElementDescriptor(analyzer, this.elementName || this.source);
-            this.set('_analyzer', analyzer);
-          }.bind(this));
-        }
-      });
+      if(source && source !== ''){
+        this.debounce( 'hydro', function(){
+          this._analyze(source, elementName);
+        });
+      }
+    },
+    /**
+     * Handle analyizing the specified element.
+     * @param {String} source The name of the component.
+     * @param {String} element The name of the element.
+     */
+    _analyze: function(source, element){
+      var hyd = require('hydrolysis');
+      //have hydrolysis analyze the requested component
+      hyd.Analyzer.analyze(source + ".html").then(function(analyzer) {
+        this._setElementDescriptor(analyzer, element || source);
+        this.set('_analyzer', analyzer);
+      }.bind(this));
     },
     /*
     * This method is called when the return button is clicked/tapped
