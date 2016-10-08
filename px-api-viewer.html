@@ -64,7 +64,17 @@ Element providing API documentation for a requested Polymer component
       */
       source: {
         type: String,
-        value: '',
+        //value: '',
+        notify: true
+      },
+      /*
+      * A string holding the name of the element to display documentation for.
+      * Use this property if your component includes multiple elements.
+      * @property elementName
+      * @type String
+      */
+      elementName: {
+        type: String,
         notify: true
       },
       /*
@@ -90,17 +100,37 @@ Element providing API documentation for a requested Polymer component
         notify: true
       }
     },
+    observers: ['_onSourceChange(source, elementName)'],
     listeners: {
       'iron-doc-viewer-component-selected':'_behaviorClicked'
     },
     attached: function() {
+      this.debounce( 'hydro', function(){
+        this._analyze(this.source, this.elementName);
+      });
+    },
+    /**
+     * This method handles loading the source element when the value changes.
+     */
+    _onSourceChange: function(source, elementName){
+      if(source && source !== ''){
+        this.debounce( 'hydro', function(){
+          this._analyze(source, elementName);
+        });
+      }
+    },
+    /**
+     * Handle analyizing the specified element.
+     * @param {String} source The name of the component.
+     * @param {String} element The name of the element.
+     */
+    _analyze: function(source, element){
       var hyd = require('hydrolysis');
       //have hydrolysis analyze the requested component
-      hyd.Analyzer.analyze(this.source + ".html")
-        .then(function(analyzer) {
-          this._setElementDescriptor(analyzer);
-          this.set('_analyzer', analyzer);
-        }.bind(this));
+      hyd.Analyzer.analyze(source + ".html").then(function(analyzer) {
+        this._setElementDescriptor(analyzer, element || source);
+        this.set('_analyzer', analyzer);
+      }.bind(this));
     },
     /*
     * This method is called when the return button is clicked/tapped
@@ -135,12 +165,9 @@ Element providing API documentation for a requested Polymer component
     * @method _setElementDescriptor
     */
     _setElementDescriptor: function(analyzer, elem) {
-      var behavior = false;
-      if (!elem) { //if an elem wasn't passed it, it's the initial load, and elem should be this.source
-        elem = this.source;
-      } else { //if one WAS passed, this is a behavior.
-        behavior = true;
-      }
+      var behavior = analyzer.behaviorsByName.hasOwnProperty(elem);
+      var element = analyzer.elementsByTagName.hasOwnProperty(elem);
+
       //if behavior is false, we are analyzing an element
       if (!behavior) {
         this.set('_elementDescriptor', analyzer.elementsByTagName[elem]);
