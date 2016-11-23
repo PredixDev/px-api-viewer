@@ -1,3 +1,7 @@
+v0.1.4
+==================
+* Update px-theme to 2.0.1 and update test fixtures
+
 v0.1.3
 ==================
 * modified the marked element behavior to open a new window on a link click
