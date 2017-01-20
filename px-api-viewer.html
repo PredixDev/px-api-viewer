@@ -22,6 +22,8 @@ Element providing API documentation for a requested Polymer component
 -->
 
 <link rel="import" href="css/px-api-viewer-styles.html">
+<link rel="import" href="../px-theme/px-theme-styles.html">
+
 <dom-module id="px-api-viewer">
   <template>
     <style include="px-api-viewer-styles"></style>
@@ -31,7 +33,7 @@ Element providing API documentation for a requested Polymer component
     </template>
     <iron-doc-viewer descriptor="[[_elementDescriptor]]"></iron-doc-viewer>
   </template>
-</dom-module>
+</dom-module> 
 
 <script>
   Polymer({
@@ -105,25 +107,25 @@ Element providing API documentation for a requested Polymer component
 
         var renderer = new marked.Renderer();
         renderer.link = function(href, title, text) {
-       if (this.options.sanitize) {
-         try {
-           var prot = decodeURIComponent(unescape(href))
-             .replace(/[^\w:]/g, '')
-             .toLowerCase();
-         } catch (e) {
-           return '';
-         }
-         if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
-           return '';
-         }
-       }
-       var out = '<a href="' + href + '"';
-       if (title) {
-         out += ' title="' + title + '"';
-       }
-       out += 'target="_blank">' + text + '</a>';
-       return out;
-     };
+          if (this.options.sanitize) {
+            try {
+              var prot = decodeURIComponent(unescape(href))
+                .replace(/[^\w:]/g, '')
+                .toLowerCase();
+            } catch (e) {
+              return '';
+            }
+            if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+              return '';
+            }
+          }
+          var out = '<a href="' + href + '"';
+          if (title) {
+            out += ' title="' + title + '"';
+          }
+          out += 'target="_blank">' + text + '</a>';
+          return out;
+        };
         marked.setOptions({ renderer: renderer });
     },
     /*
@@ -155,7 +157,7 @@ Element providing API documentation for a requested Polymer component
     */
     /*
     * Set the _elementDescriptor on the component, and fire an event.
-    * can seet either an element, or behavior.
+    * can seet either an element, or behavior. 
     * @method _setElementDescriptor
     */
     _setElementDescriptor: function(analyzer, elem) {
