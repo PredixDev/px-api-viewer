@@ -1,6 +1,6 @@
 v0.1.17
 ==================
-* light themed the --iron-doc-viewer css variables
+* mapped --iron-doc-viewer variables to --iron-doc-viewer variables
 
 v0.1.16
 ==================
