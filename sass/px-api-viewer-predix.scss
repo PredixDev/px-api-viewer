@@ -22,4 +22,28 @@ common/abstract rules go in px-api-viewer-sketch.scss, not in this file.
 // Settings
 @import "px-colors-design/_settings.colors.scss";
 
+:root{
+
+  --iron-doc-viewer-markdown-background : $gray1;   
+  --iron-doc-viewer-text-color : $black;
+  --iron-doc-viewer-title-link : $black;
+  --iron-doc-viewer-title-link-hover : $select-blue-hover;
+  --iron-doc-viewer-api-link-color : $primary-blue;
+  --iron-doc-viewer-code-color : $black;
+  --iron-doc-viewer-summary-link-color : $primary-blue;
+  --iron-doc-viewer-nav-border : $gray1;
+  --iron-doc-viewer-property-background : $gray1;
+  --iron-doc-viewer-private-property-background : $gray2;
+  --iron-doc-viewer-button-hover : $select-blue-hover;
+  --iron-doc-viewer-property-deeplink-color: $black;
+  --iron-doc-viewer-property-deeplink-color-hover: $select-blue-hover;
+  --iron-doc-viewer-property-signature-color: $black;
+  --iron-doc-viewer-property-annotation-color: $gray7;
+  --iron-doc-viewer-property-default-value-color: $gray7;
+  --iron-doc-viewer-property-markdown-link-color: $primary-blue;
+  --iron-doc-viewer-property-meta-color: $primary-blue;
+
+}
+
+
 @import 'px-api-viewer-sketch.scss';

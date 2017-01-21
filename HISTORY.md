@@ -1,3 +1,7 @@
+v0.1.17
+==================
+* light themed the --iron-doc-viewer css variables
+
 v0.1.16
 ==================
 * added px-theme-style import
