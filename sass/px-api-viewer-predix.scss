@@ -41,6 +41,7 @@ common/abstract rules go in px-api-viewer-sketch.scss, not in this file.
   --iron-doc-viewer-property-default-value-color: var(--px-api-viewer-value-color, $gray7);
   --iron-doc-viewer-property-markdown-link-color: var(--px-api-viewer-markdown-link-color, $primary-blue);
   --iron-doc-viewer-property-meta-color: var(--px-api-viewer-meta-color, $dv-basic-purple);
+  --iron-doc-viewer-td-color: var(--px-api-viewer-summary-td-color, $black);
 }
 
 
