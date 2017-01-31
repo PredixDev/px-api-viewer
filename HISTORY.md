@@ -1,3 +1,7 @@
+v0.2.0
+==================
+* added the ability to filter out or change description of properties for the api viewer.
+
 v0.1.17
 ==================
 * mapped --iron-doc-viewer variables to --iron-doc-viewer variables
