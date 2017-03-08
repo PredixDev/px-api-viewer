@@ -100,7 +100,7 @@ Custom property | Description | Default
         notify: true
       },
       /**
-       * An array which contains the names of properties which will be removed
+       * An array which contains the names of properties/methods/events which will be removed
        * from the hydrolysis object
        * @type {Array}
        */
@@ -210,8 +210,64 @@ Custom property | Description | Default
           promises.push(this._LoopThroughProperties(category,i));
         }
       }
+      //events hide inside behaviors...
+      if (category === "behaviors") {
+        this._hideEvents();
+      }
 
       return Promise.all(promises);
+    },
+    /**
+    *
+    * This method filters/removes any properties passed into using the hide attribute, by filtering out
+    * any matches between the 
+    * @method _hideProperties
+    */
+    _hideProperties: function(category, categoryIndex) {
+      var properties = this._analyzer[category][categoryIndex].properties,
+          propertiesToMutate = [];
+      //hide is a special case, since it involves removal of the item,
+      //which messes up indexes. so, instead, we filter anything that needs hiding - effectively
+      //removing the items this way.
+      propertiesToMutate = properties.filter(function(currentProperty) {
+        return this.hide.indexOf(currentProperty.name) === -1;
+      }.bind(this));
+
+      // if we found anything that put in the propertiesToMutate array, we can what the references are pointing to
+      // for both the _analyzer and the properties object.
+      if (propertiesToMutate.length !== properties.length) {
+        properties = this._analyzer[category][categoryIndex].properties = propertiesToMutate;
+      }
+      return properties;
+    },
+    /**
+     * 
+     * events are hidden inside behaviors, so, we have to loop through them, 
+     * and find the ones that might have been passed in the "hide" attribute
+     * @method _hide_events
+     */
+    _hideEvents: function() {
+      var behaviors = this._analyzer.behaviors,
+          events,
+          mutatedBehaviors = [];
+      //we also might want to hide events, which are in the behaviors array
+      behaviors.forEach(function(behavior) {
+        events = behavior.events;
+        if (events.length) {
+          events = events.filter(function(event) {
+            return (this.hide.indexOf(event.name) === -1)
+          }.bind(this));
+          behavior.events = events;
+          
+        }
+        mutatedBehaviors.push(behavior);
+      }.bind(this));
+
+       // if we found anything that put in the propertiesToMutate array, we can what the references are pointing to
+      // for both the _analyzer and the properties object.
+      if (mutatedBehaviors.length !== behaviors.length) {
+        behaviors = this._analyzer.behaviors = mutatedBehaviors;
+      }
     },
     /**
      * Loops through the properties inside the Hydrolysis object category ('elements' or 'behaviors'), and calls _isInPassedOptions
@@ -221,23 +277,17 @@ Custom property | Description | Default
      */
     _LoopThroughProperties: function(category, categoryIndex) {
       var promises = [],
-          properties = this._analyzer[category][categoryIndex].properties,
+          properties,
           property,
           j,
           len,
-          //hide is a special case, since it involves removal of the item,
-          //which messes up indexes. so, instead, we filter anything that needs hiding - effectively
-          //removing the items this way.
-          propertiesToMutate = properties.filter(function(currentProperty) {
-            return this.hide.indexOf(currentProperty.name) === -1;
-          }.bind(this));
-
-      // if we found anything that put in the propertiesToMutate array, we can what the references are pointing to
-      // for both the _analyzer and the properties object.
-      if (propertiesToMutate.length !== properties.length) {
-        properties = this._analyzer[category][categoryIndex].properties = propertiesToMutate;
-      }
-
+          mutatedBehaviors =[],
+          mutatedEvents = [],
+          events;
+      
+      //first, let's hide the properties
+      properties = this._hideProperties(category, categoryIndex);
+      
       // Then try to apply other mutations
       for (j = 0, len = properties.length; j < len; j++) {
         property = this._analyzer[category][categoryIndex].properties[j];

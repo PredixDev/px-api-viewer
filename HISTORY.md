@@ -1,3 +1,7 @@
+v0.32.0
+==================
+* added the ability to filter out events by name as well.
+
 v0.2.0
 ==================
 * added the ability to filter out or change description of properties for the api viewer.
