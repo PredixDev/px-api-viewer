@@ -1,4 +1,4 @@
-v0.32.0
+v0.3.0
 ==================
 * added the ability to filter out events by name as well.
 
