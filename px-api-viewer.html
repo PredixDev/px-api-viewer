@@ -190,7 +190,8 @@ Custom property | Description | Default
       for (i = 0, len = this._apiGroups.length; i < len; i++) {
         promises.push(this._loopsThroughGroups(this._apiGroups[i]));
       }
-      return Promise.all(promises);
+
+       return Promise.all(promises);
 
     },
     /**
@@ -210,10 +211,7 @@ Custom property | Description | Default
           promises.push(this._LoopThroughProperties(category,i));
         }
       }
-      //events hide inside behaviors...
-      if (category === "behaviors") {
-        this._hideEvents();
-      }
+
 
       return Promise.all(promises);
     },
@@ -242,32 +240,23 @@ Custom property | Description | Default
     },
     /**
      * 
-     * events are hidden inside behaviors, so, we have to loop through them, 
+     * events are hidden inside the element, so, we have to loop through them, 
      * and find the ones that might have been passed in the "hide" attribute
+     * we are looping through the element found under elementsByTagName, since that's the one
+     * we end up passing to iron-doc-viewer.
      * @method _hide_events
      */
     _hideEvents: function() {
       var behaviors = this._analyzer.behaviors,
           events,
-          mutatedBehaviors = [];
-      //we also might want to hide events, which are in the behaviors array
-      behaviors.forEach(function(behavior) {
-        events = behavior.events;
-        if (events.length) {
-          events = events.filter(function(event) {
-            return (this.hide.indexOf(event.name) === -1)
-          }.bind(this));
-          behavior.events = events;
-          
-        }
-        mutatedBehaviors.push(behavior);
+          mutatedevents = [],
+          currentElement = this._analyzer.elementsByTagName[this.source];
+
+      mutatedevents = currentElement.events.filter(function(event) {
+        return (this.hide.indexOf(event.name) === -1);
       }.bind(this));
 
-       // if we found anything that put in the propertiesToMutate array, we can what the references are pointing to
-      // for both the _analyzer and the properties object.
-      if (mutatedBehaviors.length !== behaviors.length) {
-        behaviors = this._analyzer.behaviors = mutatedBehaviors;
-      }
+      currentElement.events = mutatedevents;
     },
     /**
      * Loops through the properties inside the Hydrolysis object category ('elements' or 'behaviors'), and calls _isInPassedOptions
@@ -288,6 +277,8 @@ Custom property | Description | Default
       //first, let's hide the properties
       properties = this._hideProperties(category, categoryIndex);
       
+      //now, we hide the events - which are hiding in a behavior, inside the element in question.
+
       // Then try to apply other mutations
       for (j = 0, len = properties.length; j < len; j++) {
         property = this._analyzer[category][categoryIndex].properties[j];
@@ -389,6 +380,9 @@ Custom property | Description | Default
           this.set('_analyzer', analyzer);
 
           this._cleanHydrolizerObj()
+          .then(function() {
+            this._hideEvents();
+          }.bind(this))
           .then(function() {
           this._setElementDescriptor(this._analyzer);
         }.bind(this));

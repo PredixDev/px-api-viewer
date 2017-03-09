@@ -1,3 +1,7 @@
+v0.3.1
+==================
+* fixed small bug in filtering events.
+ 
 v0.3.0
 ==================
 * added the ability to filter out events by name as well.
