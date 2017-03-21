@@ -207,7 +207,7 @@ Custom property | Description | Default
         var name = this._analyzer[category][i].is,
             prefixLength = this.filterTagByPrefix.length || 0;
 
-        if (this.filterTagByPrefix.length ===0 || (name.substr(0, prefixLength).toLowerCase() === this.filterTagByPrefix)) {
+        if (this.filterTagByPrefix.length === 0 || ((typeof name === 'string') && name.substr(0, prefixLength).toLowerCase() === this.filterTagByPrefix)) {
           promises.push(this._LoopThroughProperties(category,i));
         }
       }
@@ -218,7 +218,7 @@ Custom property | Description | Default
     /**
     *
     * This method filters/removes any properties passed into using the hide attribute, by filtering out
-    * any matches between the 
+    * any matches between the
     * @method _hideProperties
     */
     _hideProperties: function(category, categoryIndex) {
@@ -239,8 +239,8 @@ Custom property | Description | Default
       return properties;
     },
     /**
-     * 
-     * events are hidden inside the element, so, we have to loop through them, 
+     *
+     * events are hidden inside the element, so, we have to loop through them,
      * and find the ones that might have been passed in the "hide" attribute
      * we are looping through the element found under elementsByTagName, since that's the one
      * we end up passing to iron-doc-viewer.
@@ -273,10 +273,10 @@ Custom property | Description | Default
           mutatedBehaviors =[],
           mutatedEvents = [],
           events;
-      
+
       //first, let's hide the properties
       properties = this._hideProperties(category, categoryIndex);
-      
+
       //now, we hide the events - which are hiding in a behavior, inside the element in question.
 
       // Then try to apply other mutations
