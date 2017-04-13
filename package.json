@@ -2,8 +2,8 @@
     "name": "px-api-viewer",
     "author": "General Electric",
     "description": "A Px component",
-    "version": "0.3.2",
-    "private": true,
+    "version": "1.0.0",
+    "private": false,
     "extName": null,
     "repository": {
         "type": "git",

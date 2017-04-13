@@ -1,3 +1,7 @@
+v1.0.0-prerelease
+==================
+* updated dependencies for design refresh
+
 v0.3.2
 ==================
 * Checks for the type of a variable before calling a native method from `String.prototype` to stop the method from throwing an error on an unexpected file input, helps when we are crawling a import graph with class-style Polymer constructors
@@ -5,7 +9,7 @@ v0.3.2
 v0.3.1
 ==================
 * fixed small bug in filtering events.
- 
+
 v0.3.0
 ==================
 * added the ability to filter out events by name as well.
