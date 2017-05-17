@@ -26,21 +26,21 @@ common/abstract rules go in px-api-viewer-sketch.scss, not in this file.
   --iron-doc-viewer-markdown-background : var(--px-api-viewer-markdown-background, $gray1);
   --iron-doc-viewer-text-color : var(--px-api-viewer-text-color, $black);
   --iron-doc-viewer-title-link : var(--px-api-viewer-title-link, $black);
-  --iron-doc-viewer-title-link-hover : var(--px-api-viewer-title-link--hover, $select-blue-hover);
-  --iron-doc-viewer-api-link-color : var(--px-api-viewer-api-link-color, $primary-blue);
+  --iron-doc-viewer-title-link-hover : var(--px-api-viewer-title-link--hover, $select-hover);
+  --iron-doc-viewer-api-link-color : var(--px-api-viewer-api-link-color, $primary-default);
   --iron-doc-viewer-code-color : var(--px-api-viewer-code-color, $black);
-  --iron-doc-viewer-summary-link-color : var(--px-api-viewer-summary-link-color, $primary-blue);
+  --iron-doc-viewer-summary-link-color : var(--px-api-viewer-summary-link-color, $primary-default);
   --iron-doc-viewer-nav-border : var(--px-api-viewer-nav-border, $gray1);
   --iron-doc-viewer-property-background : var(--px-api-viewer-property-background, $gray1);
   --iron-doc-viewer-private-property-background : var(--px-api-viewer-private-property-background, $gray2);
-  --iron-doc-viewer-button-hover : var(--px-api-viewer-button--hover, $select-blue-hover);
+  --iron-doc-viewer-button-hover : var(--px-api-viewer-button--hover, $select-hover);
   --iron-doc-viewer-property-deeplink-color: var(--px-api-viewer-property-name-color, $black);
-  --iron-doc-viewer-property-deeplink-color-hover: var(--px-api-viewer-property-name-color--hover, $select-blue-hover);
+  --iron-doc-viewer-property-deeplink-color-hover: var(--px-api-viewer-property-name-color--hover, $select-hover);
   --iron-doc-viewer-property-signature-color: var(--px-api-viewer-method-parameters-color, $black);
   --iron-doc-viewer-property-annotation-color: var(--px-api-viewer-annotation-color, $gray7);
   --iron-doc-viewer-property-default-value-color: var(--px-api-viewer-value-color, $gray7);
-  --iron-doc-viewer-property-markdown-link-color: var(--px-api-viewer-markdown-link-color, $primary-blue);
-  --iron-doc-viewer-property-meta-color: var(--px-api-viewer-meta-color, $dv-basic-purple);
+  --iron-doc-viewer-property-markdown-link-color: var(--px-api-viewer-markdown-link-color, $primary-default);
+  --iron-doc-viewer-property-meta-color: var(--px-api-viewer-meta-color, $violet6);
   --iron-doc-viewer-td-color: var(--px-api-viewer-summary-td-color, $black);
 }
 
