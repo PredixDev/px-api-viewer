@@ -1,8 +1,8 @@
-# Px-Api-Viewer
+# px-api-viewer
 
 ## Overview
 
-Px-api-viewer is a Predix UI component which uses Hydrolysis and iron-doc-viewer to create API docs on the fly from a requested Component.
+Px-api-viewer is a Predix UI component which uses Hydrolysis and iron-doc-viewer to create API docs on the fly from a requested component.
 
 You need to pass the `source` attribute to the component - this attribute should hold the name of the component you'd like the API created for.
 
