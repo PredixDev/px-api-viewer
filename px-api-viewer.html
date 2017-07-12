@@ -6,7 +6,8 @@
 <link rel="import" href="../polymer/polymer.html"/>
 <link rel="import" href="../hydrolysis/hydrolysis-analyzer.html" />
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html" />
-<link rel="import" href="../px-polymer-font-awesome/px-icon-set.html" />
+<link rel="import" href="../px-icon-set/px-icon-set.html" />
+<link rel="import" href="../px-icon-set/px-icon.html" />
 
 <!--
 Element providing API documentation for a requested Polymer component
@@ -18,10 +19,10 @@ Element providing API documentation for a requested Polymer component
 ### Styling
 The following custom properties are available for styling. Use them with the default tooltip-style property (omit it, or use value "dark").
 
-Custom property | Description | Default
-----------------|-------------|----------
-`--px-tooltip-text-color` | Text color for the tooltip | `$white`
-`--px-tooltip-background-color` | Background color for the tooltip | `$black`
+Custom property | Description
+----------------|-------------
+`--px-tooltip-text-color` | Text color for the tooltip
+`--px-tooltip-background-color` | Background color for the tooltip
 
 @element px-api-viewer
 @blurb Element providing API documentation for a requested Polymer component
@@ -36,7 +37,7 @@ Custom property | Description | Default
     <style include="px-api-viewer-styles"></style>
     <style include="px-theme-styles"></style>
     <template is="dom-if" if="[[_behaviorOn]]">
-      <div on-tap="_turnBehaviorOff" class="returnToApi"><iron-icon icon="px:chevron-left"></iron-icon> Return to [[source]]'s API</div>
+      <div on-tap="_turnBehaviorOff" class="returnToApi"><px-icon icon="px:chevron-left"></px-icon> Return to [[source]]'s API</div>
     </template>
     <iron-doc-viewer descriptor="[[_elementDescriptor]]"></iron-doc-viewer>
   </template>
