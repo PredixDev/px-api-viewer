@@ -4,10 +4,11 @@
     'grunt depserve' (or similar server setup) to enable correct finding of bower dependencies for local runs.
 -->
 <link rel="import" href="../polymer/polymer.html"/>
-<link rel="import" href="../hydrolysis/hydrolysis-analyzer.html" />
 <link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html" />
 <link rel="import" href="../px-icon-set/px-icon-set.html" />
 <link rel="import" href="../px-icon-set/px-icon.html" />
+<link rel="import" href="../iron-ajax/iron-ajax.html" />
+
 
 <!--
 Element providing API documentation for a requested Polymer component
@@ -34,6 +35,12 @@ Custom property | Description
 <link rel="import" href="../px-theme/px-theme-styles.html">
 <dom-module id="px-api-viewer">
   <template>
+    <iron-ajax
+        auto
+        url="../[[source]]/[[source]]-api.json"
+        handle-as="json"
+        on-response="handleResponse">
+    </iron-ajax>
     <style include="px-api-viewer-styles"></style>
     <style include="px-theme-styles"></style>
     <template is="dom-if" if="[[_behaviorOn]]">
@@ -204,12 +211,14 @@ Custom property | Description
       var promises = [],
           i,
           len;
-      for (i = 0, len = this._analyzer[category].length; i < len; i++) {
-        var name = this._analyzer[category][i].is,
-            prefixLength = this.filterTagByPrefix.length || 0;
+      if(this._elementDescriptor[category]){
+        for (i = 0, len = this._elementDescriptor[category].length; i < len; i++) {
+          var name = this._elementDescriptor[category][i].tagname,
+          prefixLength = this.filterTagByPrefix.length || 0;
 
-        if (this.filterTagByPrefix.length === 0 || ((typeof name === 'string') && name.substr(0, prefixLength).toLowerCase() === this.filterTagByPrefix)) {
-          promises.push(this._LoopThroughProperties(category,i));
+          if (this.filterTagByPrefix.length === 0 || ((typeof name === 'string') && name.substr(0, prefixLength).toLowerCase() === this.filterTagByPrefix)) {
+            promises.push(this._LoopThroughProperties(category,i));
+          }
         }
       }
 
@@ -223,7 +232,7 @@ Custom property | Description
     * @method _hideProperties
     */
     _hideProperties: function(category, categoryIndex) {
-      var properties = this._analyzer[category][categoryIndex].properties,
+      var properties = this._elementDescriptor[category][categoryIndex].properties,
           propertiesToMutate = [];
       //hide is a special case, since it involves removal of the item,
       //which messes up indexes. so, instead, we filter anything that needs hiding - effectively
@@ -235,7 +244,7 @@ Custom property | Description
       // if we found anything that put in the propertiesToMutate array, we can what the references are pointing to
       // for both the _analyzer and the properties object.
       if (propertiesToMutate.length !== properties.length) {
-        properties = this._analyzer[category][categoryIndex].properties = propertiesToMutate;
+        properties = this._elementDescriptor[category][categoryIndex].properties = propertiesToMutate;
       }
       return properties;
     },
@@ -248,10 +257,10 @@ Custom property | Description
      * @method _hide_events
      */
     _hideEvents: function() {
-      var behaviors = this._analyzer.behaviors,
+      var behaviors = this._elementDescriptor.behaviors,
           events,
           mutatedevents = [],
-          currentElement = this._analyzer.elementsByTagName[this.source];
+          currentElement = this._elementDescriptor.elementsByTagName[this.source];
 
       mutatedevents = currentElement.events.filter(function(event) {
         return (this.hide.indexOf(event.name) === -1);
@@ -282,7 +291,7 @@ Custom property | Description
 
       // Then try to apply other mutations
       for (j = 0, len = properties.length; j < len; j++) {
-        property = this._analyzer[category][categoryIndex].properties[j];
+        property = this._elementDescriptor[category][categoryIndex].properties[j];
         promises.push(this._loopThroughMutators(category, categoryIndex, j));
       }
 
@@ -297,7 +306,7 @@ Custom property | Description
      * @return {[type]}                 [description]
      */
     _loopThroughMutators: function(category, categoryIndex, propertiesIndex) {
-      //debugger;
+
       var promises = [];
       this._apiMutatorTypes
       .forEach(function(mutator) {
@@ -318,7 +327,7 @@ Custom property | Description
      */
     _isInPassedMutators: function(category, categoryIndex, propertiesIndex, mutator) {
       if (this[mutator] && this[mutator].length) {
-        var name = this._analyzer[category][categoryIndex].properties[propertiesIndex].name,
+        var name = this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].name,
             i,
             len;
 
@@ -346,7 +355,7 @@ Custom property | Description
      * @method _markPrivate
      */
     _markPrivate: function(category, categoryIndex, propertiesIndex) {
-      this._analyzer[category][categoryIndex].properties[propertiesIndex].private = true;
+      this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].privacy = 'protected';
       return Promise.resolve();
     },
     /**
@@ -357,7 +366,7 @@ Custom property | Description
       * @return {[Promise]}                 [gotta return that promise...]
      */
     _markReadOnly: function(category, categoryIndex, propertiesIndex) {
-      this._analyzer[category][categoryIndex].properties[propertiesIndex].readOnly = true;
+      this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].metadata.polymer.readOnly = true;
       return Promise.resolve();
     },
     /**
@@ -369,49 +378,35 @@ Custom property | Description
      * @return {[Promise]}                 [gotta return that promise...]
      */
     _changeDescription: function(category, categoryIndex, propertiesIndex, changeDescriptionIndex) {
-      this._analyzer[category][categoryIndex].properties[propertiesIndex].jsdoc.description = this.changeDescription[changeDescriptionIndex].desc;
-      this._analyzer[category][categoryIndex].properties[propertiesIndex].desc = this.changeDescription[changeDescriptionIndex].desc;
+      // this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].jsdoc.description = this.changeDescription[changeDescriptionIndex].desc;
+      this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].description = this.changeDescription[changeDescriptionIndex].desc;
       return Promise.resolve();
     },
     attached: function() {
-      var hyd = require('hydrolysis');
-      //have hydrolysis analyze the requested component
-      hyd.Analyzer.analyze(this.source + ".html")
-        .then(function(analyzer) {
-          this.set('_analyzer', analyzer);
 
-          this._cleanHydrolizerObj()
-          .then(function() {
-            this._hideEvents();
-          }.bind(this))
-          .then(function() {
-          this._setElementDescriptor(this._analyzer);
-        }.bind(this));
-      }.bind(this));
-
-        var renderer = new marked.Renderer();
-        renderer.link = function(href, title, text) {
-          if (this.options.sanitize) {
-            var prot;
-            try {
-              prot = decodeURIComponent(unescape(href))
-                .replace(/[^\w:]/g, '')
-                .toLowerCase();
-            } catch (e) {
-              return '';
-            }
-            if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
-              return '';
-            }
-          }
-          var out = '<a href="' + href + '"';
-          if (title) {
-            out += ' title="' + title + '"';
-          }
-          out += 'target="_blank">' + text + '</a>';
-          return out;
-        };
-        marked.setOptions({ renderer: renderer });
+        // var renderer = new marked.Renderer();
+        // renderer.link = function(href, title, text) {
+        //   if (this.options.sanitize) {
+        //     var prot;
+        //     try {
+        //       prot = decodeURIComponent(unescape(href))
+        //         .replace(/[^\w:]/g, '')
+        //         .toLowerCase();
+        //     } catch (e) {
+        //       return '';
+        //     }
+        //     if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+        //       return '';
+        //     }
+        //   }
+        //   var out = '<a href="' + href + '"';
+        //   if (title) {
+        //     out += ' title="' + title + '"';
+        //   }
+        //   out += 'target="_blank">' + text + '</a>';
+        //   return out;
+        // };
+        // marked.setOptions({ renderer: renderer });
     },
     /*
     * This method is called when the return button is clicked/tapped
@@ -420,7 +415,7 @@ Custom property | Description
     */
     _turnBehaviorOff: function() {
       this.set('_behaviorOn',false);
-      this._setElementDescriptor(this._analyzer);
+      this._setElementDescriptor(this._elementDescriptor);
     },
     /*
     * This listener method is called when a behavior API is requested.
@@ -428,7 +423,7 @@ Custom property | Description
     * @method _behaviorClicked
     */
     _behaviorClicked: function(evt) {
-      this._setElementDescriptor(this._analyzer, evt.detail);
+      this._setElementDescriptor(this._elementDescriptor, evt.detail);
     },
     /*
     * Fired when hydrolysis successfully passes the json for an element
@@ -454,14 +449,23 @@ Custom property | Description
       }
       //if behavior is false, we are analyzing an element
       if (!behavior) {
-        this.set('_elementDescriptor', analyzer.elementsByTagName[elem]);
-        this.fire('pxElementAPIReceived', analyzer.elementsByTagName[elem]);
+        // this.set('_elementDescriptor', analyzer.elementsByTagName[elem]);
+        // this.fire('pxElementAPIReceived', analyzer.elementsByTagName[elem]);
       } else {
         //if behavior is true, we are analyzing the behavior specified in elem.
-        this.set('_elementDescriptor', analyzer.behaviorsByName[elem]);
-        this.fire('pxBehaviorAPIReceived', analyzer.behaviorsByName[elem]);
-        this.set('_behaviorOn',true);
+        // this.set('_elementDescriptor', analyzer.behaviorsByName[elem]);
+        // this.fire('pxBehaviorAPIReceived', analyzer.behaviorsByName[elem]);
+        // this.set('_behaviorOn',true);
       }
+    },
+    handleResponse: function(val){
+      var eleDescriptor = val.target.lastResponse;
+      this._elementDescriptor = eleDescriptor;
+      this._cleanHydrolizerObj().then(function(){
+        this.set('_elementDescriptor', eleDescriptor );
+        this.fire('pxElementAPIReceived', eleDescriptor);
+      }.bind(this))
+
     }
   });
 </script>
