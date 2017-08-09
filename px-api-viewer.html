@@ -229,24 +229,18 @@ Custom property | Description
     *
     * This method filters/removes any properties passed into using the hide attribute, by filtering out
     * any matches between the
-    * @method _hideProperties
+    * @method _hideAPI
     */
-    _hideProperties: function(category, categoryIndex) {
-      var properties = this._elementDescriptor[category][categoryIndex].properties,
-          propertiesToMutate = [];
+    _hideAPI: function(inputSetToFilter) {
+      var propertiesToMutate = [];
       //hide is a special case, since it involves removal of the item,
       //which messes up indexes. so, instead, we filter anything that needs hiding - effectively
       //removing the items this way.
-      propertiesToMutate = properties.filter(function(currentProperty) {
+      propertiesToMutate = inputSetToFilter.filter(function(currentProperty) {
         return this.hide.indexOf(currentProperty.name) === -1;
       }.bind(this));
 
-      // if we found anything that put in the propertiesToMutate array, we can what the references are pointing to
-      // for both the _analyzer and the properties object.
-      if (propertiesToMutate.length !== properties.length) {
-        properties = this._elementDescriptor[category][categoryIndex].properties = propertiesToMutate;
-      }
-      return properties;
+      return propertiesToMutate;
     },
     /**
      *
@@ -280,19 +274,27 @@ Custom property | Description
           property,
           j,
           len,
+          methods,
+          method,
           mutatedBehaviors =[],
           mutatedEvents = [],
           events;
 
       //first, let's hide the properties
-      properties = this._hideProperties(category, categoryIndex);
+
+      properties = this._hideAPI(this._elementDescriptor[category][categoryIndex].properties);
+      methods = this._hideAPI(this._elementDescriptor[category][categoryIndex].methods);
 
       //now, we hide the events - which are hiding in a behavior, inside the element in question.
-
-      // Then try to apply other mutations
+      //Then try to apply other mutations
       for (j = 0, len = properties.length; j < len; j++) {
         property = this._elementDescriptor[category][categoryIndex].properties[j];
-        promises.push(this._loopThroughMutators(category, categoryIndex, j));
+        promises.push(this._loopThroughMutators(category, categoryIndex, property));
+      }
+
+      for (j = 0, len = methods.length; j < len; j++) {
+        method = this._elementDescriptor[category][categoryIndex].methods[j];
+        promises.push(this._loopThroughMutators(category, categoryIndex, method));
       }
 
       return Promise.all(promises);
@@ -354,8 +356,8 @@ Custom property | Description
      * @param  {[object]} item [an object which contains the full path to the item in question. set in _findItemInHydrolysisObj]
      * @method _markPrivate
      */
-    _markPrivate: function(category, categoryIndex, propertiesIndex) {
-      this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].privacy = 'protected';
+    _markPrivate: function(category, categoryIndex, property) {
+      property.privacy = 'protected';
       return Promise.resolve();
     },
     /**
@@ -378,7 +380,6 @@ Custom property | Description
      * @return {[Promise]}                 [gotta return that promise...]
      */
     _changeDescription: function(category, categoryIndex, propertiesIndex, changeDescriptionIndex) {
-      // this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].jsdoc.description = this.changeDescription[changeDescriptionIndex].desc;
       this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].description = this.changeDescription[changeDescriptionIndex].desc;
       return Promise.resolve();
     },
