@@ -191,15 +191,32 @@ Custom property | Description
      * @return {Object}      [an object containing the following properties: category, categoryIndex, propertiesIndex and item]
      */
     _cleanHydrolizerObj: function() {
-      var promises = [],
-          i,
-          len;
+      var categories = ['methods', 'properties'],
+          thisElement = this._elementDescriptor['elements'].find(function(eleAPI){
+            return (eleAPI.tagname === this.source);
+          }, this);
 
-      for (i = 0, len = this._apiGroups.length; i < len; i++) {
-        promises.push(this._loopsThroughGroups(this._apiGroups[i]));
-      }
+      categories.forEach(function(apiClass){
+        var elementAPICollection = thisElement[apiClass];
+        elementAPICollection = this._hideAPI(elementAPICollection);
+        elementAPICollection.forEach(function(apiItem){
+          this._markReadOnly(apiItem);
+          this._markPrivate(apiItem);
+          // this._changeDescription(apiItem);
 
-       return Promise.all(promises);
+        }, this);
+        // this._hideEvents(apiItem);
+
+      thisElement[apiClass] = elementAPICollection;
+      }, this);
+
+      return thisElement;
+
+      // for (i = 0, len = this._apiGroups.length; i < len; i++) {
+      //   promises.push(this._loopsThroughGroups(this._apiGroups[i]));
+      // }
+
+      //  return Promise.all(promises);
 
     },
     /**
@@ -307,12 +324,12 @@ Custom property | Description
      * @param  {[String]}  propertiesIndex The index of the property in question
      * @return {[type]}                 [description]
      */
-    _loopThroughMutators: function(category, categoryIndex, propertiesIndex) {
+    _loopThroughMutators: function(category, categoryIndex, property) {
 
       var promises = [];
       this._apiMutatorTypes
       .forEach(function(mutator) {
-        promises.push(this._isInPassedMutators(category, categoryIndex, propertiesIndex, mutator));
+        promises.push(this._isInPassedMutators(category, categoryIndex, property, mutator));
       }.bind(this));
 
       return Promise.all(promises);
@@ -327,20 +344,20 @@ Custom property | Description
      * @param  {[String]}  mutator         a string representing a mutator object this a component property which can be passed by the user - for example hide, or changeDescription
      *
      */
-    _isInPassedMutators: function(category, categoryIndex, propertiesIndex, mutator) {
+    _isInPassedMutators: function(category, categoryIndex, property, mutator) {
       if (this[mutator] && this[mutator].length) {
-        var name = this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].name,
+        var name = property.name,
             i,
             len;
 
         if (this[mutator].indexOf(name) !== -1) {
-          return this['_' + mutator](category, categoryIndex, propertiesIndex);
+          return this['_' + mutator](category, categoryIndex, property);
         //next, we check if our mutator is changeDescription - which has a different data structure, and
         //is an array of objects, as opposed to strings.
         } else if (mutator === 'changeDescription'){
           for (i = 0, len = this.changeDescription.length; i < len; i++) {
             if (this.changeDescription[i].name === name) {
-              return this._changeDescription(category, categoryIndex, propertiesIndex, i);
+              return this._changeDescription(category, categoryIndex, property, i);
             }
           }
         // we wanna make sure that we return a promise
@@ -356,9 +373,12 @@ Custom property | Description
      * @param  {[object]} item [an object which contains the full path to the item in question. set in _findItemInHydrolysisObj]
      * @method _markPrivate
      */
-    _markPrivate: function(category, categoryIndex, property) {
-      property.privacy = 'protected';
-      return Promise.resolve();
+    _markPrivate: function(property) {
+      if (this.markPrivate.indexOf(property.name) !== -1){
+        console.log(property.name);
+        property.privacy = 'protected';
+      }
+
     },
     /**
      * marks the requested item as readOnly in the requested properties in the object we get back from hydrloysis
@@ -367,9 +387,10 @@ Custom property | Description
      * @param  {[String]}  propertiesIndex The index of the property in question
       * @return {[Promise]}                 [gotta return that promise...]
      */
-    _markReadOnly: function(category, categoryIndex, propertiesIndex) {
-      this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].metadata.polymer.readOnly = true;
-      return Promise.resolve();
+    _markReadOnly: function(property) {
+      if (this.markReadOnly.indexOf(property.name) !== -1){
+        property.metadata.polymer.readOnly = true;
+      }
     },
     /**
      * changes the description of the item in question. both the jsdoc.descriptiona nd .desc have to be changed for this change to take effect.
@@ -379,8 +400,8 @@ Custom property | Description
      * @param  {[Number]} changeDescriptionIndex [the index of the item in question in the changeDescription array]
      * @return {[Promise]}                 [gotta return that promise...]
      */
-    _changeDescription: function(category, categoryIndex, propertiesIndex, changeDescriptionIndex) {
-      this._elementDescriptor[category][categoryIndex].properties[propertiesIndex].description = this.changeDescription[changeDescriptionIndex].desc;
+    _changeDescription: function(category, categoryIndex, property, changeDescriptionIndex) {
+      property.description = this.changeDescription[changeDescriptionIndex].desc;
       return Promise.resolve();
     },
     attached: function() {
@@ -462,11 +483,9 @@ Custom property | Description
     handleResponse: function(val){
       var eleDescriptor = val.target.lastResponse;
       this._elementDescriptor = eleDescriptor;
-      this._cleanHydrolizerObj().then(function(){
-        this.set('_elementDescriptor', eleDescriptor );
-        this.fire('pxElementAPIReceived', eleDescriptor);
-      }.bind(this))
-
+      this._cleanHydrolizerObj();
+      this.set('_elementDescriptor', eleDescriptor );
+      this.fire('pxElementAPIReceived', eleDescriptor);
     }
   });
 </script>
