@@ -199,11 +199,10 @@ Custom property | Description
       categories.forEach(function(apiClass){
         var elementAPICollection = thisElement[apiClass];
         elementAPICollection = this._hideAPI(elementAPICollection);
+        elementAPICollection = this._changeDescription(elementAPICollection);
         elementAPICollection.forEach(function(apiItem){
           this._markReadOnly(apiItem);
           this._markPrivate(apiItem);
-          // this._changeDescription(apiItem);
-
         }, this);
         // this._hideEvents(apiItem);
 
@@ -400,9 +399,16 @@ Custom property | Description
      * @param  {[Number]} changeDescriptionIndex [the index of the item in question in the changeDescription array]
      * @return {[Promise]}                 [gotta return that promise...]
      */
-    _changeDescription: function(category, categoryIndex, property, changeDescriptionIndex) {
-      property.description = this.changeDescription[changeDescriptionIndex].desc;
-      return Promise.resolve();
+    _changeDescription: function(inputSetToChange) {
+      this.changeDescription.forEach(function(propertyToChange){
+        var itemToUpdate = inputSetToChange.find(function(property){
+          return propertyToChange.name === property.name;
+        });
+        if (itemToUpdate) {
+          itemToUpdate.description = propertyToChange.desc;
+        }
+      });
+      return inputSetToChange;
     },
     attached: function() {
 
