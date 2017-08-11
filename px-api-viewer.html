@@ -29,9 +29,9 @@ Custom property | Description
   <template>
     <iron-ajax
         auto
-        url="../[[source]]/[[source]]-api.json"
+        url="[[_getAPIUrl(source)]]"
         handle-as="json"
-        on-response="handleResponse">
+        on-response="_handleResponse">
     </iron-ajax>
     <style include="iron-doc-default-theme"></style>
     <style include="px-api-viewer-styles"></style>
@@ -182,12 +182,17 @@ Custom property | Description
       });
       return inputSetToChange;
     },
-    handleResponse: function(val){
+    _handleResponse: function(val){
       var eleDescriptor = val.target.lastResponse;
       this._elementDescriptor = eleDescriptor;
       this._cleanAPIDocs();
       this.set('_elementDescriptor', eleDescriptor );
-      this.fire('pxElementAPIReceived', eleDescriptor);
+      this.fire('pxElementAPIReceived', eleDescriptor[15]);
+    },
+    _getAPIUrl: function(){
+      var parentFolder = this.importPath.substr(0, this.importPath.indexOf(this.tagName.toLowerCase()))
+      console.log(parentFolder + this.source + '/' + this.source + '-api.json');
+      return parentFolder + this.source + '/' + this.source + '-api.json';
     }
   });
 </script>
