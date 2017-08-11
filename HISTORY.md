@@ -1,3 +1,7 @@
+v2.0.0
+===================
+* Switch to using `polymer analyze` static generated output.
+
 v1.0.1
 ===================
 * Fix comment for analyzer
