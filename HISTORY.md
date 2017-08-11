@@ -1,3 +1,7 @@
+v2.0.1
+===================
+* Fix up path finding for component api json file
+
 v2.0.0
 ===================
 * Switch to using `polymer analyze` static generated output.
