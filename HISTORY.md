@@ -1,3 +1,7 @@
+v2.0.2
+===================
+* Remove debug statement
+
 v2.0.1
 ===================
 * Fix up path finding for component api json file
