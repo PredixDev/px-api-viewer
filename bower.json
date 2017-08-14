@@ -18,7 +18,6 @@
     ".github"
   ],
   "dependencies": {
-    "hydrolysis": "~1.24.1",
     "iron-doc-viewer": "^3.0.0",
     "polymer": "^1.9.0",
     "px-icon-set": "^2.0.0",

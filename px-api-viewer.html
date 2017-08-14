@@ -29,7 +29,7 @@ Custom property | Description
   <template>
     <iron-ajax
         auto
-        url="[[_getAPIUrl(source)]]"
+        url="[[_getAPIUrl(source, apiSourceFilePath)]]"
         handle-as="json"
         on-response="_handleResponse">
     </iron-ajax>
@@ -74,6 +74,16 @@ Custom property | Description
         type: String,
         value: '',
         notify: true
+      },
+      /*
+      * A string holding the path to the api source file e.g. px-tabs/px-tabs-api.json
+      *
+      * @property apiSourceFilePath
+      * @type String
+      */
+      apiSourceFilePath: {
+        type: String,
+        value: ''
       },
       /**
        * An array which contains the names of properties/methods/events which will be removed
@@ -191,7 +201,11 @@ Custom property | Description
     },
     _getAPIUrl: function(){
       var parentFolder = this.importPath.substr(0, this.importPath.indexOf(this.tagName.toLowerCase()))
-      return parentFolder + this.source + '/' + this.source + '-api.json';
+      if(this.apiSourceFilePath){
+        return parentFolder + this.apiSourceFilePath;
+      }else {
+        return parentFolder + this.source + '/' + this.source + '-api.json';;
+      }
     }
   });
 </script>
