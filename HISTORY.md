@@ -1,3 +1,7 @@
+v2.0.3
+===================
+* Slim down iron-doc-viewer just to used parts and control routing ourselves
+
 v2.0.2
 ===================
 * Remove debug statement
