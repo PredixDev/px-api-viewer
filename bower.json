@@ -22,7 +22,8 @@
     "polymer": "^1.9.0",
     "px-icon-set": "^2.0.0",
     "px-theme": "^3.0.0",
-    "iron-ajax": "^2.0.4"
+    "iron-ajax": "^2.0.4",
+    "iron-location": "^2.0.1"
   },
   "devDependencies": {
     "px-box-sizing-design": "^1.0.0",

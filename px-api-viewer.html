@@ -1,9 +1,10 @@
-<link rel="import" href="../polymer/polymer.html"/>
-<link rel="import" href="../iron-doc-viewer/iron-doc-viewer.html" />
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-location/iron-location.html" />
+<link rel="import" href="../iron-doc-viewer/iron-doc-element.html" />
+<link rel="import" href="../iron-doc-viewer/default-theme.html" />
 <link rel="import" href="../iron-ajax/iron-ajax.html" />
-<link rel="import" href="../iron-doc-viewer/default-theme.html">
-<link rel="import" href="../px-theme/px-theme-styles.html"/>
-<link rel="import" href="css/px-api-viewer-styles.html"/>
+<link rel="import" href="../px-theme/px-theme-styles.html" />
+<link rel="import" href="css/px-api-viewer-styles.html" />
 
 <!--
 Element providing API documentation for a requested Polymer component
@@ -36,7 +37,13 @@ Custom property | Description
     <style include="iron-doc-default-theme"></style>
     <style include="px-api-viewer-styles"></style>
     <style include="px-theme-styles"></style>
-    <iron-doc-viewer descriptor="[[_elementDescriptor]]"></iron-doc-viewer>
+    <iron-location hash="{{_hash}}"></iron-location>
+    <iron-doc-element
+        id="doc"
+        descriptor="[[_targetElementDescriptor]]"
+        base-href="[[_getBaseHref(disableHashPrefix)]]"
+        fragment-prefix="[[_getFragmentPrefix(source, pagePath)]]">
+    </iron-doc-element>
   </template>
 </dom-module>
 
@@ -128,7 +135,65 @@ Custom property | Description
         value: function() {
           return [];
         }
+      },
+      /**
+       * By default it is assumed all page paths are done with a hash symbol
+       * for client-side routing. If your server is equipped to handle real
+       * paths for single page app routing, disable this. See `pagePath`
+       * for more details.
+       * @type {Boolean}
+       */
+      disableHashPrefix: {
+        type: Boolean,
+        value: false
+      },
+      /**
+       * The path to the page that this demo is hosted on from the root.
+       * This path is used to create the anchor links for the API viewer.
+       * Should begin with a '/' slash. By default it is assumed this will
+       * be preceded by a hash for client-side routing. See `disableHashPrefix`
+       * to disable this behavior.
+       *
+       * Example: For a component with a demo/API page hosted at
+       * 'https://www.predix-ui.com/#/elements/px-alert-message', the page
+       * path should be '/elements/px-alert-message'.
+       * @type {String}
+       */
+      pagePath: {
+        type: String,
+        value: ''
+      },
+      /**
+       * The filtered element descriptor pared down to only include the element
+       * that is demo'ed. Uses the element name from the `source` property.
+       * @type {Object}
+       */
+      _targetElementDescriptor: {
+        type: Object,
+        computed: '_getTargetElementDesc(source, _elementDescriptor)'
+      },
+      /**
+       * The active anchor (the portion of the URL after the ':' symbol), used
+       * to scroll the page to a specific spot on load.
+       * @type {String}
+       */
+      _anchor: {
+        type: String,
+        value: '',
+        computed: '_getAnchorFromHash(_hash)',
+        observer: '_tryScrollToAnchor'
+      },
+      _baseHref: {
+        type: String,
+
       }
+    },
+    attached: function() {
+      this._handlePageLoaded = this._handlePageLoaded || this._handlePageLoaded.bind(this);
+      window.addEventListener('page-loaded', this._handlePageLoaded, false);
+    },
+    detached: function() {
+      window.removeEventListener('page-loaded', this._handlePageLoaded, false);
     },
     /**
      * find the passed item in either the elements or behaviors arrays in the analyzer obj
@@ -206,6 +271,50 @@ Custom property | Description
       }else {
         return parentFolder + this.source + '/' + this.source + '-api.json';;
       }
+    },
+    // @NOTE: The scrolling is causing a weird error where some of the page
+    // is no longer fit into the visible region of the app shell. Need to fix
+    // before re-introducing the scrollTo handlers below. Otherwise,
+    // they do their job.
+    // Relevant methods: _handlePageLoaded and _tryScrollToAnchor
+    _handlePageLoaded: function(){
+      // if (this.isAttached && this._anchor !== '') {
+      //   var scrollTo = this._tryScrollToAnchor.bind(this, this._anchor);
+      //   Polymer.RenderStatus.afterNextRender(this, scrollTo);
+      // }
+    },
+    _tryScrollToAnchor: function(anchor){
+      // if (anchor !== '') {
+      //   this.$.doc.scrollToAnchor(anchor);
+      // }
+    },
+    _getAnchorFromHash: function(hash){
+      if (!hash || hash === '' || hash.indexOf(':') === -1) {
+        return '';
+      }
+      return hash.split(':')[1];
+    },
+    _getTargetElementDesc: function(name, descriptor){
+      return descriptor.elements.filter(function(el) {
+        return el.name === name || el.tagname === name;
+      })[0];
+    },
+    _getFragmentPrefix: function(name, pagePath) {
+      if (pagePath === '') {
+        if (window.location.hash !== '') {
+          // Make sure we don't build compound ':' paths, like
+          // '/elements/px-foo:property-one:description'
+          return window.location.hash.indexOf(':') > -1 ?  window.location.hash.slice(1).split(':')[0] + ':' : window.location.hash.slice(1) + ':';
+        }
+        return '';
+      }
+      return pagePath;
+    },
+    _getBaseHref: function(disableHashPrefix) {
+      if (disableHashPrefix) {
+        return '';
+      }
+      return '#';
     }
   });
 </script>
