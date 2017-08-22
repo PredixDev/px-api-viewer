@@ -1,3 +1,7 @@
+v2.0.4
+===================
+* attempt to style dark demo theme a bit better
+
 v2.0.3
 ===================
 * Slim down iron-doc-viewer just to used parts and control routing ourselves
