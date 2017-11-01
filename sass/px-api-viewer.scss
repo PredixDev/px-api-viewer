@@ -20,7 +20,7 @@
 $iron-doc-font-code   : '{background: var(--px-api-viewer-markdown-background, #ebeff2);color: var(--px-api-viewer-code-color, black);}';
 $iron-doc-font        : '{color: var(--px-api-viewer-text-color, black) !important;}';
 
-:host {
+:host > * {
   --iron-doc-accent-color  : var(--px-api-viewer-api-link-color, $primary-default);
   --iron-doc-font-code     : unquote($iron-doc-font-code);
   --iron-doc-heading       : unquote($iron-doc-font);

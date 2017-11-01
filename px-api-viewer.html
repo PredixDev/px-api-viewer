@@ -1,9 +1,7 @@
 <link rel="import" href="../polymer/polymer.html" />
 <link rel="import" href="../iron-location/iron-location.html" />
 <link rel="import" href="../iron-doc-viewer/iron-doc-element.html" />
-<link rel="import" href="../iron-doc-viewer/default-theme.html" />
 <link rel="import" href="../iron-ajax/iron-ajax.html" />
-<link rel="import" href="../px-theme/px-theme-styles.html" />
 <link rel="import" href="css/px-api-viewer-styles.html" />
 
 <!--
@@ -36,7 +34,6 @@ Custom property | Description
     </iron-ajax>
     <style include="iron-doc-default-theme"></style>
     <style include="px-api-viewer-styles"></style>
-    <style include="px-theme-styles"></style>
     <iron-location hash="{{_hash}}"></iron-location>
     <iron-doc-element
         id="doc"
@@ -295,9 +292,11 @@ Custom property | Description
       return hash.split(':')[1];
     },
     _getTargetElementDesc: function(name, descriptor){
-      return descriptor.elements.filter(function(el) {
-        return el.name === name || el.tagname === name;
-      })[0];
+      if (! (name === undefined || descriptor === undefined)) {
+        return descriptor.elements.filter(function(el) {
+          return el.name === name || el.tagname === name;
+        })[0];
+      }
     },
     _getFragmentPrefix: function(name, pagePath) {
       if (pagePath === '') {
