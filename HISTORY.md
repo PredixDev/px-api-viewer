@@ -1,3 +1,7 @@
+v2.1.0
+===================
+* Polymer 1.x/2.x hybrid support.
+
 v2.0.4
 ===================
 * attempt to style dark demo theme a bit better
