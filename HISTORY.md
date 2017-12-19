@@ -1,3 +1,7 @@
+v2.1.2
+===================
+* Polyfill find
+
 v2.1.1
 ===================
 * update dependencies
