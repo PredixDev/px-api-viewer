@@ -167,8 +167,7 @@ Custom property | Description
        * @type {Object}
        */
       _targetElementDescriptor: {
-        type: Object,
-        computed: '_getTargetElementDesc(source, _elementDescriptor)'
+        type: Object
       },
       /**
        * The active anchor (the portion of the URL after the ':' symbol), used
@@ -183,9 +182,18 @@ Custom property | Description
       },
       _baseHref: {
         type: String,
+      },
 
+      _elementDescriptorTrigger: {
+        type: Number,
+        value: 0
       }
     },
+
+    observers:[
+      '_getTargetElementDesc(source, _elementDescriptor, _elementDescriptorTrigger)'
+    ],
+
     attached: function() {
       this._handlePageLoaded = this._handlePageLoaded || this._handlePageLoaded.bind(this);
       window.addEventListener('page-loaded', this._handlePageLoaded, false);
@@ -260,6 +268,7 @@ Custom property | Description
       this._elementDescriptor = eleDescriptor;
       this._cleanAPIDocs();
       this.set('_elementDescriptor', eleDescriptor );
+      this.set('_elementDescriptorTrigger', this._elementDescriptorTrigger++ );
       this.fire('pxElementAPIReceived', eleDescriptor[15]);
     },
     _getAPIUrl: function(){
@@ -292,12 +301,22 @@ Custom property | Description
       }
       return hash.split(':')[1];
     },
-    _getTargetElementDesc: function(name, descriptor){
+    _getTargetElementDesc: function(name, descriptor) {
+      // descriptor is a deep nested object
+      // iron doc shite doesnt watch for deep changes
+      // so force it to rerun and pick up our updates
+      if(typeof this._targetElementDescriptor === 'object') {
+        this._targetElementDescriptor = {};
+      }
+
+      let d;
       if (! (name === undefined || descriptor === undefined)) {
-        return descriptor.elements.filter(function(el) {
+        d = descriptor.elements.filter(function(el) {
           return el.name === name || el.tagname === name;
         })[0];
       }
+
+      this.set('_targetElementDescriptor', d);
     },
     _getFragmentPrefix: function(name, pagePath) {
       if (pagePath === '') {

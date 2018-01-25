@@ -1,3 +1,7 @@
+v2.1.3
+===================
+* Fix to make sure iron-doc-elem picks up updates/changes to our api
+
 v2.1.2
 ===================
 * Polyfill find
