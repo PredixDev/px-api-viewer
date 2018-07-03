@@ -325,7 +325,7 @@ Custom property | Description
         this._targetElementDescriptor = {};
       }
 
-      let d;
+      var d;
       if (! (name === undefined || descriptor === undefined)) {
         d = descriptor.elements.filter(function(el) {
           return el.name === name || el.tagname === name;
