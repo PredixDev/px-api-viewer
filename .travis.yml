@@ -2,35 +2,33 @@ sudo: required
 dist: trusty
 language: node_js
 node_js:
-- 9
+  - 9
 branches:
   except:
-  - gh-pages
+    - gh-pages
 addons:
   firefox: latest
   apt:
     sources:
-    - google-chrome
+      - google-chrome
     packages:
-    - google-chrome-stable
+      - google-chrome-stable
 before_script:
-- npm install web-component-tester@^5.0.0
-- npm install bower
-- export PATH=$PWD/node_modules/.bin:$PATH
-- bower install
+  - npm install web-component-tester@^5.0.0
+  - npm install
+  - 'export PATH=$PWD/node_modules/.bin:$PATH'
 script:
-- xvfb-run wct --skip-plugin sauce
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then wct --plugin sauce --skip-plugin
-  local; fi
+  - xvfb-run wct --module-resolution=node --npm --skip-plugin sauce
+  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then wct --module-resolution=node --npm --plugin sauce --skip-plugin local; fi'
 after_success:
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then openssl aes-256-cbc -k "$DEPLOYSECRET"
-  -in deploy.enc -out deploy_key -d; fi
-- cd $TRAVIS_BUILD_DIR/scripts
-- chmod 755 ghp.sh
-- "./ghp.sh"
+  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then openssl aes-256-cbc -k "$DEPLOYSECRET" -in deploy.enc -out deploy_key -d; fi'
+  - cd $TRAVIS_BUILD_DIR/scripts
+  - chmod 755 ghp.sh
+  - ./ghp.sh
 env:
   global:
-  - secure: k7bdip0ncUmYKUT60kv96RLONKdSXeFraASU5Iwzg9GF+4hoJIZAFTteLyIn3PpE/P8y35tSpp+LJ6V9YXzyEn8WG4QvAeKz3OLaJ2/LFMMnX/xCFDuOibCt/8P0/fH5wDSSvXW89lshK4v3JZ+hEgFF5dmyd0vAarYs7OGQ0AXIspJFKQ6kvxAuvYSMaL0GQAWA65a+If0NnLliEykl1FG9dYy5xjCkSP9/POPoKf0XQXpo1U/Urab5tboQe6FcGzCEg94W2KehymLyVtWK+9Oo0S7CCRknglC0Eh6jPrhAa3D7eOmQLiXxgB7ODEruXbJx9wm6CDMPBLKx75YCqroLtMEOjCDTbOKqKIXyPDwE4DoE9CgRnQD+7EqaPZDyGUp0q9pThEpdvTzcd5AJi8OXQrNeL8dA760fpk8X9e2RM/zfxitKKrMM40s+V/t+uVgBFz1gvZBazR/sHNTA8yqpNOu3cDEOLTLFQ6s2zZWICU10M8XrYYQQAxWSLTUN8SIn8/zKzAliOotjrZSwtYUiJjPSRK8Vpb8vHd9EjC/KUyHpcWQIcq1KExiIwUh8zwkRl5Ik+RmARwAeSiCXpW4CU+wU7ESuDu9qffApAv7VprIJpb/1nNKGPV1/F8zpx0fsW4Sb5DOjcZmuVchWcGacr8fomUiZgSkcKVBVeRs=
-  - secure: hiJ/cWtiWeh62wxlWzmLayOv83Toer3KaZg7b/i6nIi/6z05LeqmxMaG7VAvwtdrSKhpdj3K3QKviFX3BGnZJ99JOeTgbb4HaQVqDHzBNZdU2WJzEhbO7cGQavA9qUMtV5ZPmRAoz8T+0yA6pGyH9ED7WqPn9UjXryiCJeGUUgDIOPY1US00YNwkHWIMZVYa7M4V5hoFByw8reKi1FkpBJz9o7qtw6qsK9zgqe0LliLolosLU0+IbqHLBpT7M5iBiMKxbBXm9bE4sTg4VgE9y3gcN2asxAVSyL11fcd/e1fuPyf9HYt38pddF2IDrpkQnFCufU85Ajwt23kx+rnYsOf0vPZq8MNWfiEoC64YPlGgH16CAjnZydJejviVCyKs2gMbB466OYhxtjF/IF76987k0dTnkW8PEDU+ShL4odPHj3K7Oc5wS2gzeoscTvw3mM8t0G9OWgyv61IfLyiwS7iuVzj4DDOX15iUSS8wwAGl/te0GacbvTq9MKZ00AWVYjReE/ZeEit/gvU9YGNdZvj6fanwHNO17sHu0G+J+ZBt6MSJxLtzbZ3xq1FsJsOhm1xb90BL7uumX2j+AoS1lhNd1HxCcGnNdwzzh1K5VXU6WisneDrtJRzu1JEOvZFvYccJu+NWwuC8fJA1hKA7CcdhUMT3vurrCLIKvIh8ygk=
-  - secure: HFb7LOoFBisSxavLmfjiSHjthGgvqANY1MGjk9BKl85WlE+MpPZNs09l7P5RKIfhORvPO86xcBqbRFYejNDvHVxq9qyItzQD5BJuptINlqoYVi8P7RpS+g3fPvbsjMKBtijTotiCj8uVXC1JUcG9Z/et/CYqLLfgRXzqYv4BOX2nZLsqMLhECJbfNY4Ff7icnU0AO08dHoY6UshFI7LxAe6uUVJB4VgSX6J3gYZkip7+P8XH8UnfkMZJBJTDemwd+gbaDxe/LF7NCAdLOQxo0Y0coGDOy8K0M2q2ixDVPmEeSNfySLIN2hY+0qu4JSQ5U03jKr6Q1mm7VE5ZWDHTGKx6BfOofj2s90IPVA1zdy6d3maBmzWbg4nFCTCbWY4CZ7IGXYpOICyf7UloP5nriuj8bdWQNjBxJflELTxmvCvi0lEP0kA1rvHazf4Lc7WbA8EFdZI7DApXiCltnBrfre6xLaCcQHUl9v6sA/lcfC4JJFHQG8ijdFB3i9mzvQXXj+F83DWzM0QKAV7PQ3W4nviIpgoxb4H8Dfs7MhQHS/8uc7k/L2JaXnFbPgUiZWefegR5xYSUiioLZMev1KVZoyb8E2l+nhSUygizThJCcnKLLvkDhkMZKPYS3u3SVwJ2t+nP3k6PRsvbOAnOrqltAM1PRL3wpg7g8LFsX+3qJ+4=
-  - secure: d+JLnnwnBlS/35AnLhyOCNsu/j0jOCbB9DzHVaOTNf1ZfEvkD2QPNKOapJChzbNqOIvOb3JmRVwDQ5w0PtslVcIdWXyFR9JVYKbJgrnRWAs9ZkZu21X/5ZKR7khqVB8U8UWloYV+zFFr5gihig+kfwYtLWEqhvg7oqP+HoQvpZH5wtAuLoU3qCYxjkepfDQglYlSO3QmBz3Uvari4zMhPkgA3CLctUIMkPJUvNOy/uRLyx8fHzxsB/sV2YumQrB8+8RfrTSRQx7fl5IGWmWDo7fewg4hgbls8WE74SzNXuOn871qgz9rOfVu23Mje6kKXCREknC7rlg41P4xf8ZA8FV98MU9tgYDzC48VIAlSyutCDUgkD5cVDUEK/XfEF0OKY4DbO63SW2rjeoYYsuPXS/EFFcx3EDSgdAOnwycPWI9gfqrqO/KqStz0/G56+Igkd1f/A35m/AgsNuEYPnHYTZNKcK48bJLDW0LR1ssYgSdPJnQc/PouOQGniuSPW5aVo0v9cCtxaIkZtlz+nj4PIfZxJqkBMHxLKAPdr2j81GoLyF6av4lpw7crnlZ2S7D0ZyRVOUvRzWAryuDkgf5pBHb1ss1TyXVLTcj+VG9nAgqIeL4QxWaiECnmRa125uO020t2srKIS//rllZfxF0m8bb5XQ4LkwmotU0kHf4kb4=
+    - secure: k7bdip0ncUmYKUT60kv96RLONKdSXeFraASU5Iwzg9GF+4hoJIZAFTteLyIn3PpE/P8y35tSpp+LJ6V9YXzyEn8WG4QvAeKz3OLaJ2/LFMMnX/xCFDuOibCt/8P0/fH5wDSSvXW89lshK4v3JZ+hEgFF5dmyd0vAarYs7OGQ0AXIspJFKQ6kvxAuvYSMaL0GQAWA65a+If0NnLliEykl1FG9dYy5xjCkSP9/POPoKf0XQXpo1U/Urab5tboQe6FcGzCEg94W2KehymLyVtWK+9Oo0S7CCRknglC0Eh6jPrhAa3D7eOmQLiXxgB7ODEruXbJx9wm6CDMPBLKx75YCqroLtMEOjCDTbOKqKIXyPDwE4DoE9CgRnQD+7EqaPZDyGUp0q9pThEpdvTzcd5AJi8OXQrNeL8dA760fpk8X9e2RM/zfxitKKrMM40s+V/t+uVgBFz1gvZBazR/sHNTA8yqpNOu3cDEOLTLFQ6s2zZWICU10M8XrYYQQAxWSLTUN8SIn8/zKzAliOotjrZSwtYUiJjPSRK8Vpb8vHd9EjC/KUyHpcWQIcq1KExiIwUh8zwkRl5Ik+RmARwAeSiCXpW4CU+wU7ESuDu9qffApAv7VprIJpb/1nNKGPV1/F8zpx0fsW4Sb5DOjcZmuVchWcGacr8fomUiZgSkcKVBVeRs=
+    - secure: hiJ/cWtiWeh62wxlWzmLayOv83Toer3KaZg7b/i6nIi/6z05LeqmxMaG7VAvwtdrSKhpdj3K3QKviFX3BGnZJ99JOeTgbb4HaQVqDHzBNZdU2WJzEhbO7cGQavA9qUMtV5ZPmRAoz8T+0yA6pGyH9ED7WqPn9UjXryiCJeGUUgDIOPY1US00YNwkHWIMZVYa7M4V5hoFByw8reKi1FkpBJz9o7qtw6qsK9zgqe0LliLolosLU0+IbqHLBpT7M5iBiMKxbBXm9bE4sTg4VgE9y3gcN2asxAVSyL11fcd/e1fuPyf9HYt38pddF2IDrpkQnFCufU85Ajwt23kx+rnYsOf0vPZq8MNWfiEoC64YPlGgH16CAjnZydJejviVCyKs2gMbB466OYhxtjF/IF76987k0dTnkW8PEDU+ShL4odPHj3K7Oc5wS2gzeoscTvw3mM8t0G9OWgyv61IfLyiwS7iuVzj4DDOX15iUSS8wwAGl/te0GacbvTq9MKZ00AWVYjReE/ZeEit/gvU9YGNdZvj6fanwHNO17sHu0G+J+ZBt6MSJxLtzbZ3xq1FsJsOhm1xb90BL7uumX2j+AoS1lhNd1HxCcGnNdwzzh1K5VXU6WisneDrtJRzu1JEOvZFvYccJu+NWwuC8fJA1hKA7CcdhUMT3vurrCLIKvIh8ygk=
+    - secure: HFb7LOoFBisSxavLmfjiSHjthGgvqANY1MGjk9BKl85WlE+MpPZNs09l7P5RKIfhORvPO86xcBqbRFYejNDvHVxq9qyItzQD5BJuptINlqoYVi8P7RpS+g3fPvbsjMKBtijTotiCj8uVXC1JUcG9Z/et/CYqLLfgRXzqYv4BOX2nZLsqMLhECJbfNY4Ff7icnU0AO08dHoY6UshFI7LxAe6uUVJB4VgSX6J3gYZkip7+P8XH8UnfkMZJBJTDemwd+gbaDxe/LF7NCAdLOQxo0Y0coGDOy8K0M2q2ixDVPmEeSNfySLIN2hY+0qu4JSQ5U03jKr6Q1mm7VE5ZWDHTGKx6BfOofj2s90IPVA1zdy6d3maBmzWbg4nFCTCbWY4CZ7IGXYpOICyf7UloP5nriuj8bdWQNjBxJflELTxmvCvi0lEP0kA1rvHazf4Lc7WbA8EFdZI7DApXiCltnBrfre6xLaCcQHUl9v6sA/lcfC4JJFHQG8ijdFB3i9mzvQXXj+F83DWzM0QKAV7PQ3W4nviIpgoxb4H8Dfs7MhQHS/8uc7k/L2JaXnFbPgUiZWefegR5xYSUiioLZMev1KVZoyb8E2l+nhSUygizThJCcnKLLvkDhkMZKPYS3u3SVwJ2t+nP3k6PRsvbOAnOrqltAM1PRL3wpg7g8LFsX+3qJ+4=
+    - secure: d+JLnnwnBlS/35AnLhyOCNsu/j0jOCbB9DzHVaOTNf1ZfEvkD2QPNKOapJChzbNqOIvOb3JmRVwDQ5w0PtslVcIdWXyFR9JVYKbJgrnRWAs9ZkZu21X/5ZKR7khqVB8U8UWloYV+zFFr5gihig+kfwYtLWEqhvg7oqP+HoQvpZH5wtAuLoU3qCYxjkepfDQglYlSO3QmBz3Uvari4zMhPkgA3CLctUIMkPJUvNOy/uRLyx8fHzxsB/sV2YumQrB8+8RfrTSRQx7fl5IGWmWDo7fewg4hgbls8WE74SzNXuOn871qgz9rOfVu23Mje6kKXCREknC7rlg41P4xf8ZA8FV98MU9tgYDzC48VIAlSyutCDUgkD5cVDUEK/XfEF0OKY4DbO63SW2rjeoYYsuPXS/EFFcx3EDSgdAOnwycPWI9gfqrqO/KqStz0/G56+Igkd1f/A35m/AgsNuEYPnHYTZNKcK48bJLDW0LR1ssYgSdPJnQc/PouOQGniuSPW5aVo0v9cCtxaIkZtlz+nj4PIfZxJqkBMHxLKAPdr2j81GoLyF6av4lpw7crnlZ2S7D0ZyRVOUvRzWAryuDkgf5pBHb1ss1TyXVLTcj+VG9nAgqIeL4QxWaiECnmRa125uO020t2srKIS//rllZfxF0m8bb5XQ4LkwmotU0kHf4kb4=
+
